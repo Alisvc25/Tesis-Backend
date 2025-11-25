@@ -54,7 +54,7 @@ const sendMailToRecoveryPassword = async (userMail, token) => {
 //Correo de credenciales (Administrador crea cuenta)
 const sendMailToOwner = async (userMail, password) => {
     let info = await transporter.sendMail({
-        from: process.env.URL_BACKEND,
+        from: process.env.URL_FRONTEND,
         to: userMail,
         subject: "Unidad Educativa Intercultural Bilingüe Tránsito Amaguaña 🎓 - Sistema de Registro",
         html: `
