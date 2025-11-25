@@ -24,7 +24,7 @@ const app = express();
 
 // Configurar sesiones
 app.use(cors({
-    origin: "https://deportpoli.netlify.app",
+    origin: "http://localhost:5173",
     credentials: true
 }));
 
