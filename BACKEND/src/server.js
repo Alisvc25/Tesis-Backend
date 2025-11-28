@@ -13,7 +13,7 @@ import routerDocente from './routers/docente_routes.js';
 import routerCalificacion from './routers/calificacion_routes.js';
 import session from 'express-session';
 
-
+const URL_FRONTEND = process.env.URL_FRONTEND || 'http://localhost:5173';
 
 dotenv.config();
 console.log('SESSION_SECRET:', process.env.SESSION_SECRET);
@@ -24,8 +24,8 @@ const app = express();
 
 // Configurar sesiones
 app.use(cors({
-    origin: "*",
-    credentials: true
+    origin: URL_FRONTEND,
+    credentials: true,
 }));
 
 app.use(session({
@@ -44,7 +44,7 @@ app.use(cors()); // Permitir solicitudes desde cualquier origen
 // Middlewares 
 app.use(express.json());
 // Para poder recibir datos en formato JSON y URL-encoded
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.urlencoded({ extended: true }));
 
 app.set('port', process.env.PORT || 3000);
 /*
@@ -67,10 +67,10 @@ app.use(fileUpload({
 app.use('/api', routerAdministrador);
 
 // Rutas para Director
-app.use('/apiE',routerEstudiante);
+app.use('/apiE', routerEstudiante);
 
 // Rutas para deportes
-app.use('/apiD',routerDocente);
+app.use('/apiD', routerDocente);
 
 //Ruta para calificaciones
 app.use('/apiC', routerCalificacion);
