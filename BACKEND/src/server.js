@@ -38,7 +38,7 @@ app.use(session({
 //module.exports = app;
 
 // Configuraciones 
-app.use(cors()); // Permitir solicitudes desde cualquier origen
+//app.use(cors()); // Permitir solicitudes desde cualquier origen
 
 // Middlewares 
 app.use(express.json());
