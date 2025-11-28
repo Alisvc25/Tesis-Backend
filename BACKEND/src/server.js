@@ -63,7 +63,7 @@ app.use(fileUpload({
 // Variables globales
 
 // Rutas para administradores
-app.use('/api', routerAdministrador);
+app.use('/administrador', routerAdministrador);
 
 // Rutas para Director
 app.use('/apiE', routerEstudiante);
