@@ -38,8 +38,8 @@ const registrarDocente = async (req, res) => {
     if (docenteExiste)
         return res.status(400).json({ msg: "El email ya se encuentra registrado para un docente" });
 
-    const passwordTemporal = Math.random().toString(36).slice(-8);
-    const passwordEncriptado = await bcrypt.hash(passwordTemporal, 10);
+    const passwordGenerada = Math.random().toString(36).slice(-8);
+    const passwordEncriptado = await bcrypt.hash(passwordGenerada, 10);
 
     const nuevoDocente = new Docente({
         nombre,
@@ -53,26 +53,17 @@ const registrarDocente = async (req, res) => {
         rol: "docente",
         confirmEmail: true
     });
-    /*
-        await nuevoDocente.save();
-        await sendMailToOwner(email, passwordTemporal);
-    
-        res.status(201).json({ msg: "Docente registrado correctamente y revise su correo electronico " });
-    */
 
     const saved = await nuevoDocente.save();
 
-    // RESPONDEMOS AL CLIENTE de inmediato (evita bloquear por el envío de mail)
     res.status(201).json({ msg: "Docente registrado correctamente. Revise su correo electrónico." });
 
-    // Enviamos el correo en background (no await)
     (async () => {
         try {
-            await sendMailToOwner(email, passwordTemporal);
+            await sendMailToOwner(email, passwordGenerada);
             console.log(`Email enviado a ${email}`);
         } catch (mailErr) {
             console.error(`Error enviando email a ${email}:`, mailErr);
-            // Aquí puedes guardar el fallo en DB para reintento o alertar a admin
         }
     })();
 };
@@ -88,8 +79,8 @@ const registrarEstudiante = async (req, res) => {
     if (estudianteExiste)
         return res.status(400).json({ msg: "El email ya se encuentra registrado para un estudiante" });
 
-    const passwordTemporal = Math.random().toString(36).slice(-8);
-    const passwordEncriptado = await bcrypt.hash(passwordTemporal, 10);
+    const passwordGenerada = Math.random().toString(36).slice(-8);
+    const passwordEncriptado = await bcrypt.hash(passwordGenerada, 10);
 
     const nuevoEstudiante = new Estudiante({
         nombre,
@@ -105,26 +96,17 @@ const registrarEstudiante = async (req, res) => {
         rol: "estudiante",
         confirmEmail: true
     });
-    /*
-        await nuevoEstudiante.save();
-        await sendMailToOwner(email, passwordTemporal);
-    
-        res.status(201).json({ msg: "Estudiante registrado correctamente y correo enviado" });
-        */
 
     const saved = await nuevoEstudiante.save();
 
-    // RESPONDEMOS AL CLIENTE de inmediato (evita bloquear por el envío de mail)
     res.status(201).json({ msg: "Estudiante registrado correctamente. Revise su correo electrónico." });
 
-    // Enviamos el correo en background (no await)
     (async () => {
         try {
-            await sendMailToOwner(email, passwordTemporal);
+            await sendMailToOwner(email, passwordGenerada);
             console.log(`Email enviado a ${email}`);
         } catch (mailErr) {
             console.error(`Error enviando email a ${email}:`, mailErr);
-            // Aquí puedes guardar el fallo en DB para reintento o alertar a admin
         }
     })();
 };
