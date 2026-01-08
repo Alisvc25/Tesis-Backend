@@ -147,6 +147,29 @@ const actualizarCalificacion = async (req, res) => {
     }
 };
 
+const eliminarCalificaciones = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ msg: "ID inválido" });
+        }
+
+        const calificacion = await Calificacion.findById(id);
+        if (!calificacion) {
+            return res.status(404).json({ msg: "Calificación no encontrada" });
+        }
+
+        await calificacion.deleteOne();
+        res.status(200).json({ msg: "Calificación eliminada correctamente" });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error al eliminar calificación" });
+    }
+};
+
+
 const listarCalificaciones = async (req, res) => {
     const { id } = req.params; // el id del docente
     const calificaciones = await Calificacion.find({ docente: id })
@@ -157,12 +180,11 @@ const listarCalificaciones = async (req, res) => {
 
 
 export {
-    //registrarDocente,
     loginDocente,
     perfilDocente,
-    //actualizarPerfil,
     actualizarPassword,
     crearCalificacion,
     actualizarCalificacion,
+    eliminarCalificaciones,
     listarCalificaciones
 };
