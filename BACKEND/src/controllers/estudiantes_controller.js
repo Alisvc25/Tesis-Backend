@@ -44,7 +44,25 @@ const listarCalificaciones = async (req, res) => {
     }
 };
 
+export const verCalificaciones = async (req, res) => {
+    try {
+        const calificacion = await Calificacion.findById(req.params.id)
+            .populate("docente", "nombre apellido")
+            .populate("estudiante", "nombre apellido");
+
+        if (!calificacion) {
+            return res.status(404).json({ msg: "Calificación no encontrada" });
+        }
+
+        res.json(calificacion);
+    } catch (error) {
+        res.status(500).json({ msg: "Error del servidor" });
+    }
+};
+
+
 export {
     loginEstudiante,
-    listarCalificaciones
+    listarCalificaciones,
+    verCalificaciones
 }
