@@ -63,6 +63,5 @@ export const verCalificaciones = async (req, res) => {
 
 export {
     loginEstudiante,
-    listarCalificaciones,
-    verCalificaciones
+    listarCalificaciones
 }
