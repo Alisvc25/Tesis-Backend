@@ -27,6 +27,11 @@ const estudianteSchema = new Schema({
         trim: true,
         default: null
     },
+    cultura: {
+        type: String,
+        trim: true,
+        default: null
+    },
     direccion: {
         type: String,
         trim: true,

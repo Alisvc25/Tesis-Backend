@@ -69,7 +69,7 @@ const registrarDocente = async (req, res) => {
 };
 
 const registrarEstudiante = async (req, res) => {
-    const { nombre, apellido, cedula, fechaNacimiento, nacionalidad, direccion,
+    const { nombre, apellido, cedula, fechaNacimiento, nacionalidad, cultura, direccion,
         celular, email, curso } = req.body;
 
     if (Object.values(req.body).includes(""))
@@ -88,6 +88,7 @@ const registrarEstudiante = async (req, res) => {
         cedula,
         fechaNacimiento,
         nacionalidad,
+        cultura,
         direccion,
         celular,
         email,
