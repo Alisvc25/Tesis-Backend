@@ -149,9 +149,6 @@ const transporter = nodemailer.createTransport({
 });
 
 
-// ============================
-// 1️⃣ CORREO PARA REGISTRAR CUENTA
-// ============================
 const sendMailToRegister = async (userMail, token) => {
     let info = await transporter.sendMail({
         from: process.env.EMAIL_FROM,
@@ -170,10 +167,6 @@ const sendMailToRegister = async (userMail, token) => {
     console.log("Correo enviado (registro):", info.messageId);
 };
 
-
-// ============================
-// 2️⃣ CORREO PARA RECUPERAR CONTRASEÑA
-// ============================
 const sendMailToRecoveryPassword = async (userMail, token) => {
     let info = await transporter.sendMail({
         from: process.env.EMAIL_FROM,
@@ -191,12 +184,6 @@ const sendMailToRecoveryPassword = async (userMail, token) => {
     console.log("Correo enviado (recuperación):", info.messageId);
 };
 
-
-// ============================
-// 3️⃣ CORREO CUANDO EL ADMIN CREA LA CUENTA (DOCENTE / ESTUDIANTE)
-// ============================
-// → AHORA LA CONTRASEÑA ES DEFINITIVA
-// ============================
 const sendMailToOwner = async (userMail, password) => {
     let info = await transporter.sendMail({
         from: process.env.EMAIL_FROM,

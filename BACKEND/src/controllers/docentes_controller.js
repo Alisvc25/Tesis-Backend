@@ -3,22 +3,6 @@ import Calificacion from "../models/Calificacion.js"
 import { crearTokenJWT } from "../middlewares/JWT.js"
 import mongoose from "mongoose"
 
-/*
-const registrarDocente = async (req, res) => {
-    const { email, password } = req.body;
-    if (Object.values(req.body).includes(""))
-        return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
-
-    const docenteExist = await Docente.findOne({ email });
-    if (docenteExist) return res.status(400).json({ msg: "Lo sentimos, el email ya se encuentra registrado" });
-
-    const nuevoDocente = new Docente(req.body);
-    nuevoDocente.password = await nuevoDocente.encrypPassword(password);
-    await nuevoDocente.save();
-
-    res.status(200).json({ msg: "Docente registrado correctamente" });
-};
-*/
 
 const loginDocente = async (req, res) => {
     const { email, password } = req.body;
@@ -50,45 +34,30 @@ const perfilDocente = (req, res) => {
     res.status(200).json(datosPerfil);
 };
 
-/*
-const actualizarPerfil = async (req, res) => {
-    const { id } = req.params;
-    const { nombre, apellido, direccion, celular, email, materias } = req.body;
-    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ msg: "Lo sentimos, debe ser un id válido" });
+const recuperarPassword = async (req, res) => {
+    const { email } = req.body
+    if (Object.values(req.body).includes(""))
+        return res.status(404).json({ msg: "Lo sentimos, debes llenar todos los campos" })
 
-    if (Object.values(req.body).includes("")) return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+    const docenteBDD = await Docente.findOne({ email })
+    if (!docenteBDD)
+        return res.status(404).json({ msg: "Lo sentimos, el usuario no se encuentra registrado" })
 
-    const docenteBDD = await Docente.findById(id);
-    if (!docenteBDD) return res.status(404).json({ msg: `Lo sentimos, no existe el docente ${id}` });
+    const token = docenteBDD.crearToken()
+    docenteBDD.token = token
+    await sendMailToRecoveryPassword(email, token)
+    await docenteBDD.save()
 
-    if (docenteBDD.email != email) {
-        const docenteBDDMail = await Docente.findOne({ email });
-        if (docenteBDDMail) return res.status(404).json({ msg: `Lo sentimos, el email ya se encuentra registrado` });
-    }
+    res.status(200).json({ msg: "Revisa tu correo electrónico para reestablecer tu cuenta" })
+}
 
-    docenteBDD.nombre = nombre ?? docenteBDD.nombre;
-    docenteBDD.apellido = apellido ?? docenteBDD.apellido;
-    docenteBDD.direccion = direccion ?? docenteBDD.direccion;
-    docenteBDD.celular = celular ?? docenteBDD.celular;
-    docenteBDD.email = email ?? docenteBDD.email;
-    docenteBDD.materias = materias ?? docenteBDD.materias;
-
-    await docenteBDD.save();
-    res.status(200).json(docenteBDD);
-};
-*/
-
-const actualizarPassword = async (req, res) => {
-    const docenteBDD = await Docente.findById(req.docenteBDD._id);
-    if (!docenteBDD) return res.status(404).json({ msg: "Lo sentimos, no existe el docente" });
-
-    const verificarPassword = await docenteBDD.matchPassword(req.body.passwordactual);
-    if (!verificarPassword) return res.status(404).json({ msg: "Lo sentimos, el password actual no es el correcto" });
-
-    docenteBDD.password = await docenteBDD.encrypPassword(req.body.passwordnuevo);
-    await docenteBDD.save();
-    res.status(200).json({ msg: "Password actualizado correctamente" });
-};
+const comprobarTokenPasword = async (req, res) => {
+    const { token } = req.params
+    const docenteBDD = await Docente.findOne({ token })
+    if (docenteBDD?.token !== req.params.token) return res.status(404).json({ msg: "Lo sentimos, no se puede validar la cuenta" })
+    await docenteBDD.save()
+    res.status(200).json({ msg: "Token confirmado, ya puedes crear tu nuevo password" })
+}
 
 const crearCalificacion = async (req, res) => {
     try {
@@ -182,7 +151,8 @@ const listarCalificaciones = async (req, res) => {
 export {
     loginDocente,
     perfilDocente,
-    actualizarPassword,
+    recuperarPassword,
+    comprobarTokenPasword,
     crearCalificacion,
     actualizarCalificacion,
     eliminarCalificaciones,

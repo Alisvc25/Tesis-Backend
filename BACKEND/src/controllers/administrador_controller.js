@@ -68,6 +68,49 @@ const registrarDocente = async (req, res) => {
     })();
 };
 
+const listarDocentes = async (req, res) => {
+    const docentes = await Docente.find().select("-password -token -__v -createdAt -updatedAt");
+    res.status(200).json(docentes);
+};
+
+const visualizarDocente = async (req, res) => {
+    const { id } = req.params
+
+    if (!mongoose.Types.ObjectId.isValid(id))
+        return res.status(404).json({ msg: "ID no válido" })
+
+    const docente = await Docente.findById(id).select("-password -__v")
+
+    if (!docente)
+        return res.status(404).json({ msg: "Docente no encontrado" })
+
+    res.status(200).json(docente)
+}
+
+const actualizarDocente = async (req, res) => {
+    const { id } = req.params
+
+    const docente = await Docente.findById(id)
+    if (!docente)
+        return res.status(404).json({ msg: "Docente no encontrado" })
+
+    Object.assign(docente, req.body)
+    await docente.save()
+
+    res.status(200).json({ msg: "Docente actualizado correctamente" })
+}
+
+const eliminarDocente = async (req, res) => {
+    const { id } = req.params
+
+    const docente = await Docente.findById(id)
+    if (!docente)
+        return res.status(404).json({ msg: "Docente no encontrado" })
+
+    await docente.deleteOne()
+    res.status(200).json({ msg: "Docente eliminado correctamente" })
+}
+
 const registrarEstudiante = async (req, res) => {
     const { nombre, apellido, cedula, fechaNacimiento, nacionalidad, cultura, direccion,
         celular, email, curso } = req.body;
@@ -112,6 +155,45 @@ const registrarEstudiante = async (req, res) => {
     })();
 };
 
+const listarEstudiantes = async (req, res) => {
+    const estudiantes = await Estudiante.find().select("-password -__v")
+    res.status(200).json(estudiantes)
+}
+
+const visualizarEstudiante = async (req, res) => {
+    const { id } = req.params
+
+    const estudiante = await Estudiante.findById(id).select("-password -__v")
+    if (!estudiante)
+        return res.status(404).json({ msg: "Estudiante no encontrado" })
+
+    res.status(200).json(estudiante)
+}
+
+const actualizarEstudiante = async (req, res) => {
+    const { id } = req.params
+
+    const estudiante = await Estudiante.findById(id)
+    if (!estudiante)
+        return res.status(404).json({ msg: "Estudiante no encontrado" })
+
+    Object.assign(estudiante, req.body)
+    await estudiante.save()
+
+    res.status(200).json({ msg: "Estudiante actualizado correctamente" })
+}
+
+const eliminarEstudiante = async (req, res) => {
+    const { id } = req.params
+
+    const estudiante = await Estudiante.findById(id)
+    if (!estudiante)
+        return res.status(404).json({ msg: "Estudiante no encontrado" })
+
+    await estudiante.deleteOne()
+    res.status(200).json({ msg: "Estudiante eliminado correctamente" })
+}
+
 const confirmarMail = async (req, res) => {
     //1
     if (!(req.params.token)) return res.status(400).json({ msg: "Lo sentimos, no se puede validar la cuenta" })
@@ -126,8 +208,6 @@ const confirmarMail = async (req, res) => {
     //4
     res.status(200).json({ msg: "Token confirmado, ya puedes iniciar sesión" })
 }
-
-// RECUPERAR CONTRASEÑA
 
 const recuperarPassword = async (req, res) => {
     const { email } = req.body
@@ -146,42 +226,12 @@ const recuperarPassword = async (req, res) => {
     res.status(200).json({ msg: "Revisa tu correo electrónico para reestablecer tu cuenta" })
 }
 
-
 const comprobarTokenPasword = async (req, res) => {
     const { token } = req.params
     const administradorBDD = await Administrador.findOne({ token })
     if (administradorBDD?.token !== req.params.token) return res.status(404).json({ msg: "Lo sentimos, no se puede validar la cuenta" })
     await administradorBDD.save()
     res.status(200).json({ msg: "Token confirmado, ya puedes crear tu nuevo password" })
-}
-
-
-const crearNuevoPassword = async (req, res) => {
-    //1
-    const { password, confirmpassword } = req.body;
-    const { token } = req.params;
-
-    //2
-    if (Object.values(req.body).includes(""))
-        return res.status(404).json({ msg: "Lo sentimos,debes llenar todos los campos" })
-
-    if (password !== confirmpassword)
-        return res.status(404).json({ msg: "Lo sentimos,los password no cinciden" })
-
-    const administradorBDD = await Administrador.findOne({ token: req.params.token })
-
-    //if(administradorBDD.token !== req.params.token) return res.status(404).json({msg: "Lo sentimos, no se puede validar la cuenta"})
-    if (!administradorBDD)
-        return res.status(404).json({ msg: "Lo sentimos, no se puede validar la cuenta" })
-
-    //3 logica - dejando token nulo y encriptacion de contraseña
-    administradorBDD.token = null
-    administradorBDD.password = await administradorBDD.encrypPassword(password)
-
-    await administradorBDD.save()
-
-    //4
-    res.status(200).json({ msg: "Felicitaciones, ya puedes iniciar sesion con tu nuevo password" })
 }
 
 const login = async (req, res) => {
@@ -216,36 +266,20 @@ const login = async (req, res) => {
     })
 }
 
-const perfil = (req, res) => {
-    const { token, confirmEmail, createdAt, updatedAt, __v, ...datosPerfil } = req.administradorBDD
-    res.status(200).json(datosPerfil)
-}
-
-const actualizarPassword = async (req, res) => {
-    const administradorBDD = await Administrador.findById(req.administradorBDD._id)
-    if (!administradorBDD)
-        return res.status(404).json({ msg: `Lo sentimos, no existe el administrador ${id}` })
-
-    const verificarPassword = await administradorBDD.matchPassword(req.body.passwordactual)
-    if (!verificarPassword)
-        return res.status(404).json({ msg: "Lo sentimos, el password actual no es el correcto" })
-
-    administradorBDD.password = await administradorBDD.encrypPassword(req.body.passwordnuevo)
-    await administradorBDD.save()
-
-    res.status(200).json({ msg: "Password actualizado correctamente" })
-}
-
-
 export {
     registro,
-    registrarDocente,
-    registrarEstudiante,
     confirmarMail,
     recuperarPassword,
     comprobarTokenPasword,
-    crearNuevoPassword,
     login,
-    perfil,
-    actualizarPassword
+    registrarDocente,
+    listarDocentes,
+    visualizarDocente,
+    actualizarDocente,
+    eliminarDocente,
+    registrarEstudiante,
+    listarEstudiantes,
+    visualizarEstudiante,
+    actualizarEstudiante,
+    eliminarEstudiante
 }
