@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { loginDocente, perfilDocente, recuperarPassword, eliminarCalificaciones, comprobarTokenPasword,
+import { loginDocente, perfil, recuperarPassword, eliminarCalificaciones, comprobarTokenPasword,
     crearCalificacion, actualizarCalificacion, listarCalificaciones } from '../controllers/docentes_controller.js'
 
 import { verificarTokenJWT } from '../middlewares/JWT.js'
@@ -8,7 +8,7 @@ const router = Router()
 
 router.post("/login", loginDocente);
 
-router.get("/perfil", verificarTokenJWT, perfilDocente);
+router.get("/perfil", verificarTokenJWT, perfil);
 router.put("/recuperarpassword", recuperarPassword);
 router.get('/recuperarpassword/:token',comprobarTokenPasword)
 

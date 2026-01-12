@@ -43,6 +43,10 @@ const listarCalificaciones = async (req, res) => {
         res.status(500).json({ msg: "Error al obtener calificaciones" });
     }
 };
+const perfil = (req, res) => {
+    const { token, confirmEmail, createdAt, updatedAt, __v, ...datosPerfil } = req.docenteBDD;
+    res.status(200).json(datosPerfil);
+};
 
 export const verCalificaciones = async (req, res) => {
     try {
@@ -63,5 +67,6 @@ export const verCalificaciones = async (req, res) => {
 
 export {
     loginEstudiante,
+    perfil,
     listarCalificaciones
 }

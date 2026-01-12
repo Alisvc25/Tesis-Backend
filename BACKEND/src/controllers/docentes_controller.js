@@ -29,7 +29,7 @@ const loginDocente = async (req, res) => {
     });
 };
 
-const perfilDocente = (req, res) => {
+const perfil = (req, res) => {
     const { token, confirmEmail, createdAt, updatedAt, __v, ...datosPerfil } = req.docenteBDD;
     res.status(200).json(datosPerfil);
 };
@@ -150,7 +150,7 @@ const listarCalificaciones = async (req, res) => {
 
 export {
     loginDocente,
-    perfilDocente,
+    perfil,
     recuperarPassword,
     comprobarTokenPasword,
     crearCalificacion,
