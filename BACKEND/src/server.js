@@ -1,6 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import { Resend } from "resend";
+
 import routerAdministrador from './routers/administrador_routes.js';
 
 //Estudiante
