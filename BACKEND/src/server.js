@@ -33,7 +33,12 @@ app.use(cors({
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    proxy: true,
+    cookie: {
+        secure: false,
+        sameSite: 'none',
+    }
 }));
 
 //module.exports = app;
