@@ -14,8 +14,6 @@ import routerCalificacion from './routers/calificacion_routes.js';
 import session from 'express-session';
 
 dotenv.config();
-console.log('SESSION_SECRET:', process.env.SESSION_SECRET);
-
 
 // Inicializaciones
 const app = express();
