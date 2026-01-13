@@ -3,26 +3,20 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import routerAdministrador from './routers/administrador_routes.js';
 
-//Estudiante
 import routerEstudiante from './routers/estudiante_routes.js';
 
-//Docente
 import routerDocente from './routers/docente_routes.js';
 
-//Calificaciones
 import routerCalificacion from './routers/calificacion_routes.js';
 import session from 'express-session';
 
 dotenv.config();
-console.log('SESSION_SECRET:', process.env.SESSION_SECRET);
 
-
-// Inicializaciones
 const app = express();
-
+/*
 const FRONTEND_URL = process.env.FRONTEND_URL || process.env.URL_FRONTEND || 'http://localhost:5173';
 console.log('FRONTEND_URL:', FRONTEND_URL);
-
+*/
 // Configurar sesiones
 app.use(cors({
     //origin: FRONTEND_URL,
@@ -31,41 +25,24 @@ app.use(cors({
 }));
 
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || 'secret',
     resave: false,
     saveUninitialized: false,
+    /*
     proxy: true,
     cookie: {
         secure: false,
         sameSite: 'none',
-    }
+    }*/
 }));
-
-//module.exports = app;
-
-// Configuraciones 
-//app.use(cors()); // Permitir solicitudes desde cualquier origen
 
 // Middlewares 
 app.use(express.json());
 // Para poder recibir datos en formato JSON y URL-encoded
 app.use(express.urlencoded({ extended: true }));
 
-app.set('port', process.env.PORT || 3000);
-/*
-// Configuración de Cloudinary
-cloudinary.config({
-    cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
-    api_key:process.env.CLOUDINARY_API_KEY,
-    api_secret:process.env.CLOUDINARY_API_SECRET
-})
+//app.set('port', process.env.PORT || 3000);
 
-app.use(fileUpload({
-    useTempFiles : true,
-    tempFileDir : './uploads',
-    limits: { fileSize: 10 * 1024 * 1024 }, // hasta 10MB
-}))
-*/
 // Variables globales
 
 // Rutas para administradores
