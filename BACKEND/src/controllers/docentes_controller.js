@@ -1,7 +1,7 @@
 import Docente from "../models/Docente.js"
 import Calificacion from "../models/Calificacion.js"
 import { crearTokenJWT } from "../middlewares/JWT.js"
-import { sendMailToRecoveryPassword } from "../helpers/email.js"
+import { sendMailToRecoveryPassword } from "../config/nodemailler.js"
 import mongoose from "mongoose"
 
 
@@ -46,8 +46,10 @@ const recuperarPassword = async (req, res) => {
 
     const token = docenteBDD.crearToken()
     docenteBDD.token = token
-    await sendMailToRecoveryPassword(email, token)
+    
     await docenteBDD.save()
+    
+    await sendMailToRecoveryPassword(email, token)
 
     res.status(200).json({ msg: "Revisa tu correo electrónico para reestablecer tu cuenta" })
 }

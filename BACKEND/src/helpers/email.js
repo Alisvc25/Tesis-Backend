@@ -1,3 +1,4 @@
+/*
 import { Resend } from "resend";
 import dotenv from "dotenv";
 
@@ -93,3 +94,4 @@ export {
     sendMailToRecoveryPassword,
     sendMailToOwner
 };
+*/
