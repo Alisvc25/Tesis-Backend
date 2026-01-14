@@ -5,27 +5,38 @@ dotenv.config();
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
-    secure: true,   
+    secure: false,
+    requireTLS: true,
     auth: {
         user: process.env.USER_SMTP,
-        pass: process.env.PASS_SMTP, 
+        pass: process.env.PASS_SMTP,
     },
+    tls: {
+        minVersion: 'TLSv1.2',
+    },
+    connectionTimeout: 20000,
+    greetingTimeout: 20000,
+    socketTimeout: 20000,
 });
 
-    const FROM = `UEIB Tránsito Amaguaña <${process.env.FROM_EMAIL}>`;
+transporter.verify()
+    .then(() => console.log("✅ SMTP listo"))
+    .catch((e) => console.log("❌ SMTP verify:", e.message));
 
-    const FRONTEND = (process.env.FRONTEND_URL || "").replace(/\/$/, "");
+const FROM = `UEIB Tránsito Amaguaña <${process.env.FROM_EMAIL}>`;
 
-    export const verifyMailer = async () => {
+const FRONTEND = (process.env.FRONTEND_URL || "").replace(/\/$/, "");
+
+export const verifyMailer = async () => {
     try {
         await transporter.verify();
         console.log("✅ Mailer listo (Gmail SMTP OK)");
     } catch (e) {
         console.error("❌ Error mailer:", e.message);
     }
-    };
+};
 
-    export const sendMailToRegister = async (userMail, token) => {
+export const sendMailToRegister = async (userMail, token) => {
     const link = `${FRONTEND}/confirm/${token}`;
 
     await transporter.sendMail({
@@ -65,9 +76,9 @@ const transporter = nodemailer.createTransport({
         </div>
         `,
     });
-    };
+};
 
-    export const sendMailToRecoveryPassword = async (userMail, token) => {
+export const sendMailToRecoveryPassword = async (userMail, token) => {
     const link = `${FRONTEND}/recuperar-password/${token}`;
 
     await transporter.sendMail({
@@ -107,9 +118,9 @@ const transporter = nodemailer.createTransport({
         </div>
         `,
     });
-    };
+};
 
-    export const sendMailToOwner = async (userMail, password) => {
+export const sendMailToOwner = async (userMail, password) => {
     const link = `${FRONTEND}/login`;
 
     await transporter.sendMail({
