@@ -3,17 +3,27 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: "gmail",
     auth: {
         user: process.env.USER_SMTP,
-        pass: process.env.PASS_SMTP,
-    }
+        pass: process.env.PASS_SMTP, 
+    },
 });
 
-const FROM = 'UEIB Tránsito Amaguaña <${process.env.FROM_EMAIL}>';
-const FRONTEND = process.env.FRONTEND_URL;
+    const FROM = `UEIB Tránsito Amaguaña <${process.env.FROM_EMAIL}>`;
 
-export const sendMailToRegister = async (userMail, token) => {
+    const FRONTEND = (process.env.FRONTEND_URL || "").replace(/\/$/, "");
+
+    export const verifyMailer = async () => {
+    try {
+        await transporter.verify();
+        console.log("✅ Mailer listo (Gmail SMTP OK)");
+    } catch (e) {
+        console.error("❌ Error mailer:", e.message);
+    }
+    };
+
+    export const sendMailToRegister = async (userMail, token) => {
     const link = `${FRONTEND}/confirm/${token}`;
 
     await transporter.sendMail({
@@ -52,17 +62,17 @@ export const sendMailToRegister = async (userMail, token) => {
             </div>
         </div>
         `,
-        });
+    });
     };
 
     export const sendMailToRecoveryPassword = async (userMail, token) => {
-        const link = `${FRONTEND}/recuperar-password/${token}`;
+    const link = `${FRONTEND}/recuperar-password/${token}`;
 
-        await transporter.sendMail({
-            from: FROM,
-            to: userMail,
-            subject: "Restablecer contraseña – UEIB Tránsito Amaguaña 🔐",
-            html: `
+    await transporter.sendMail({
+        from: FROM,
+        to: userMail,
+        subject: "Restablecer contraseña – UEIB Tránsito Amaguaña 🔐",
+        html: `
         <div style="font-family:Inter,Arial,sans-serif;background:#f6f8fb;padding:24px">
             <div style="max-width:560px;margin:auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb">
             <div style="background:#dc2626;padding:18px 22px;color:#fff">
@@ -94,17 +104,17 @@ export const sendMailToRegister = async (userMail, token) => {
             </div>
         </div>
         `,
-        });
+    });
     };
 
     export const sendMailToOwner = async (userMail, password) => {
-        const link = `${FRONTEND}/login`;
+    const link = `${FRONTEND}/login`;
 
-        await transporter.sendMail({
-            from: FROM,
-            to: userMail,
-            subject: "Credenciales de acceso – Sistema Académico 🎓",
-            html: `
+    await transporter.sendMail({
+        from: FROM,
+        to: userMail,
+        subject: "Credenciales de acceso – Sistema Académico 🎓",
+        html: `
         <div style="font-family:Inter,Arial,sans-serif;background:#f6f8fb;padding:24px">
             <div style="max-width:560px;margin:auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb">
             <div style="background:#1e3a8a;padding:18px 22px;color:#fff">
@@ -135,6 +145,6 @@ export const sendMailToRegister = async (userMail, token) => {
             </div>
             </div>
         </div>
-    `,
+        `,
     });
 };
