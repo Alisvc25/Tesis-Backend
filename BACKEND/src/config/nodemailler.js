@@ -1,3 +1,4 @@
+/*
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 dotenv.config();
@@ -12,22 +13,10 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-transporter.verify()
-    .then(() => console.log("✅ SMTP listo"))
-    .catch((e) => console.log("❌ SMTP verify:", e.message));
-
 const FROM = `UEIB Tránsito Amaguaña <${process.env.FROM_EMAIL}>`;
 
 const FRONTEND = (process.env.FRONTEND_URL || "").replace(/\/$/, "");
 
-export const verifyMailer = async () => {
-    try {
-        await transporter.verify();
-        console.log("✅ Mailer listo (Gmail SMTP OK)");
-    } catch (e) {
-        console.error("❌ Error mailer:", e.message);
-    }
-};
 
 export const sendMailToRegister = async (userMail, token) => {
     const link = `${FRONTEND}/confirm/${token}`;
@@ -152,5 +141,98 @@ export const sendMailToOwner = async (userMail, password) => {
             </div>
         </div>
         `,
+    });
+};
+*/
+
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+const FRONTEND = process.env.FRONTEND_URL;
+const FROM = process.env.FROM_EMAIL || "onboarding@resend.dev";
+
+export const sendMailToOwner = async (userMail, password) => {
+    const link = `${FRONTEND}/login`;
+
+    return await resend.emails.send({
+        from: `UEIB Tránsito Amaguaña <${FROM}>`,
+        to: userMail,
+        subject: "Credenciales de acceso – Sistema Académico 🎓",
+        html: `
+        <div style="font-family:Inter,Arial,sans-serif;background:#f6f8fb;padding:24px">
+            <div style="max-width:560px;margin:auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb">
+            <div style="background:#1e3a8a;padding:18px 22px;color:#fff">
+                <h2 style="margin:0;font-size:18px">Sistema Académico</h2>
+                <p style="margin:6px 0 0;opacity:.9">Credenciales</p>
+            </div>
+            <div style="padding:22px">
+                <p style="margin:0 0 12px">Tu cuenta fue creada exitosamente.</p>
+                <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:14px">
+                <p style="margin:0 0 8px"><b>Usuario:</b> ${userMail}</p>
+                <p style="margin:0"><b>Contraseña:</b> ${password}</p>
+                </div>
+                <a href="${link}" style="display:inline-block;margin-top:16px;background:#1e3a8a;color:#fff;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:600">
+                Iniciar sesión
+                </a>
+            </div>
+            </div>
+        </div>
+    `,
+    });
+};
+
+export const sendMailToRecoveryPassword = async (userMail, token) => {
+    const link = `${FRONTEND}/recuperar-password/${token}`;
+
+    return await resend.emails.send({
+        from: `UEIB Tránsito Amaguaña <${FROM}>`,
+        to: userMail,
+        subject: "Restablecer contraseña – UEIB Tránsito Amaguaña 🔐",
+        html: `
+        <div style="font-family:Inter,Arial,sans-serif;background:#f6f8fb;padding:24px">
+            <div style="max-width:560px;margin:auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb">
+            <div style="background:#dc2626;padding:18px 22px;color:#fff">
+                <h2 style="margin:0;font-size:18px">Restablecer contraseña</h2>
+            </div>
+            <div style="padding:22px">
+                <p style="margin:0 0 12px">Haz clic para crear una nueva contraseña:</p>
+                <a href="${link}" style="display:inline-block;background:#dc2626;color:#fff;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:600">
+                Crear nueva contraseña
+                </a>
+                <p style="margin:14px 0 0;font-size:12px;color:#9ca3af">
+                Enlace alternativo: <span style="word-break:break-all">${link}</span>
+                </p>
+            </div>
+            </div>
+        </div>
+    `,
+    });
+};
+
+export const sendMailToRegister = async (userMail, token) => {
+    const link = `${FRONTEND}/confirm/${token}`;
+
+    return await resend.emails.send({
+        from: `UEIB Tránsito Amaguaña <${FROM}>`,
+        to: userMail,
+        subject: "Activación de cuenta – UEIB Tránsito Amaguaña 🎓",
+        html: `
+        <div style="font-family:Inter,Arial,sans-serif;background:#f6f8fb;padding:24px">
+            <div style="max-width:560px;margin:auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb">
+            <div style="background:#1e3a8a;padding:18px 22px;color:#fff">
+                <h2 style="margin:0;font-size:18px">Activación de cuenta</h2>
+            </div>
+            <div style="padding:22px">
+                <p style="margin:0 0 12px">Activa tu cuenta aquí:</p>
+                <a href="${link}" style="display:inline-block;background:#1e3a8a;color:#fff;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:600">
+                Activar cuenta
+                </a>
+                <p style="margin:14px 0 0;font-size:12px;color:#9ca3af">
+                Enlace alternativo: <span style="word-break:break-all">${link}</span>
+                </p>
+            </div>
+            </div>
+        </div>
+    `,
     });
 };
