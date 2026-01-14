@@ -25,7 +25,6 @@ const registro = async (req, res) => {
 
     await sendMailToRegister(email, token)
 
-
     //4
     res.status(200).json({ msg: "Revisa tu correo electrónico para confirmar tu cuenta" })
 }
@@ -66,6 +65,7 @@ const registrarDocente = async (req, res) => {
 
 const listarDocentes = async (req, res) => {
     const docentes = await Docente.find().select("-password -token -__v -createdAt -updatedAt");
+
     res.status(200).json(docentes);
 };
 
@@ -251,7 +251,6 @@ const crearNuevoPassword = async (req, res) => {
 
     return res.status(200).json({ msg: "Password actualizado correctamente" });
 };
-
 
 const login = async (req, res) => {
     const { email, password } = req.body;
