@@ -5,8 +5,8 @@ const FRONTEND = process.env.FRONTEND_URL || "http://localhost:5173";
 // transporter Gmail usando tus variables
 const transporter = nodemailer.createTransport({
     host: process.env.HOST_MAILTRAP,
-    port: Number(process.env.PORT_MAILTRAP || 465),
-    secure: Number(process.env.PORT_MAILTRAP || 465) === 465,
+    port: Number(process.env.PORT_MAILTRAP || 587),
+    secure: Number(process.env.PORT_MAILTRAP || 587) === 587,
     auth: {
         user: process.env.USER_MAILTRAP,
         pass: process.env.PASS_MAILTRAP,
