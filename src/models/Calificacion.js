@@ -89,8 +89,7 @@ const calificacionSchema = new Schema({
     timestamps: true
 });
 
-//Calculo del promedio final 
-calificacionSchema.pre('save', function (next) {
+calificacionSchema.pre('save', function () {
     const calcularPromedio = (p) => {
         const deberes = p.deberes || 0;
         const examenes = p.examenes || 0;
@@ -99,26 +98,23 @@ calificacionSchema.pre('save', function (next) {
         const total = deberes + examenes + trabajosClase + proyectos;
         const Suma = [deberes, examenes, trabajosClase, proyectos].filter(score => score > 0).length;
         if (Suma === 0) return 0;
-        const count = 4; 
+        const count = 4;
         return Number((total / count).toFixed(2));
     };
 
-    //Calculo del promedio en caso de que haya notas en cada trimestre
     this.parcial1.promedio = calcularPromedio(this.parcial1);
     this.parcial2.promedio = calcularPromedio(this.parcial2);
     this.parcial3.promedio = calcularPromedio(this.parcial3);
 
-    // Promedio final con las notas de cada trimestre
     const parciales = [this.parcial1.promedio, this.parcial2.promedio, this.parcial3.promedio].filter(p => p > 0);
-    
+
     if (parciales.length === 0) {
         this.promedioFinal = 0;
-    }else{
+    } else {
         const sumaPromedios = parciales.reduce((acc, curr) => acc + curr, 0);
         this.promedioFinal = (sumaPromedios / parciales.length).toFixed(2);
     }
-    
-    next();
 });
+
 
 export default mongoose.model('Calificacion', calificacionSchema);

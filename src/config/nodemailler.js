@@ -8,23 +8,21 @@ const FRONTEND = process.env.FRONTEND_URL || "http://localhost:5173";
 const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = process.env.FROM_EMAIL || "onboarding@resend.dev";
 
-// ✅ Plantilla igual (la tuya)
 const baseTemplate = (title, bodyHtml) => `
-  <div style="font-family: Arial, sans-serif; background:#f6f7fb; padding:24px;">
-    <div style="max-width:600px; margin:auto; background:#fff; padding:22px; border-radius:10px; border:1px solid #e5e7eb;">
-      <h2 style="margin:0 0 8px; color:#111827; font-size:20px;">
-        ${title}
-      </h2>
-      ${bodyHtml}
-      <hr style="border:none; border-top:1px solid #e5e7eb; margin:18px 0;">
-      <p style="margin:0; color:#6b7280; font-size:12px;">
-        Este correo fue enviado automáticamente. No responder.
-      </p>
+    <div style="font-family: Arial, sans-serif; background:#f6f7fb; padding:24px;">
+        <div style="max-width:600px; margin:auto; background:#fff; padding:22px; border-radius:10px; border:1px solid #e5e7eb;">
+        <h2 style="margin:0 0 8px; color:#111827; font-size:20px;">
+            ${title}
+        </h2>
+        ${bodyHtml}
+        <hr style="border:none; border-top:1px solid #e5e7eb; margin:18px 0;">
+        <p style="margin:0; color:#6b7280; font-size:12px;">
+            Este correo fue enviado automáticamente. No responder.
+        </p>
+        </div>
     </div>
-  </div>
 `;
 
-// ✅ Envío con RESEND (no SMTP)
 const sendMail = async ({ to, subject, html }) => {
     if (!process.env.RESEND_API_KEY) {
         console.log("⚠️ Falta RESEND_API_KEY. Correo NO enviado a:", to);
@@ -33,7 +31,7 @@ const sendMail = async ({ to, subject, html }) => {
 
     try {
         const result = await resend.emails.send({
-            from: FROM_EMAIL, // onboarding@resend.dev (o tu dominio verificado después)
+            from: FROM_EMAIL, 
             to,
             subject,
             html,
@@ -52,18 +50,18 @@ const sendMailToRegister = async (userMail, token) => {
     const html = baseTemplate(
         "Bienvenido/a a la UEIB Tránsito Amaguaña 🎓",
         `
-      <p style="margin:0 0 14px; color:#374151; font-size:15px; line-height:1.6;">
-        Tu cuenta fue creada correctamente. Para empezar a usar el sistema, activa tu cuenta aquí:
-      </p>
+        <p style="margin:0 0 14px; color:#374151; font-size:15px; line-height:1.6;">
+            Tu cuenta fue creada correctamente. Para empezar a usar el sistema, activa tu cuenta aquí:
+        </p>
 
-      <a href="${link}" 
-        style="display:inline-block; background:#1e3a8a; color:#fff; padding:12px 16px; text-decoration:none; border-radius:8px; font-weight:bold; font-size:15px;">
-        Activar cuenta
-      </a>
+        <a href="${link}" 
+            style="display:inline-block; background:#1e3a8a; color:#fff; padding:12px 16px; text-decoration:none; border-radius:8px; font-weight:bold; font-size:15px;">
+            Activar cuenta
+        </a>
 
-      <p style="margin:16px 0 0; color:#6b7280; font-size:13px; line-height:1.6;">
-        Si tú no solicitaste este registro, puedes ignorar este mensaje.
-      </p>
+        <p style="margin:16px 0 0; color:#6b7280; font-size:13px; line-height:1.6;">
+            Si tú no solicitaste este registro, puedes ignorar este mensaje.
+        </p>
     `
     );
 
@@ -80,18 +78,18 @@ const sendMailToRecoveryPassword = async (userMail, token) => {
     const html = baseTemplate(
         "Restablecer contraseña 🔐",
         `
-      <p style="margin:0 0 14px; color:#374151; font-size:15px; line-height:1.6;">
-        Recibimos una solicitud para cambiar tu contraseña. Si fuiste tú, continúa aquí:
-      </p>
+        <p style="margin:0 0 14px; color:#374151; font-size:15px; line-height:1.6;">
+            Recibimos una solicitud para cambiar tu contraseña. Si fuiste tú, continúa aquí:
+        </p>
 
-      <a href="${link}" 
-        style="display:inline-block; background:#2563eb; color:#fff; padding:12px 16px; text-decoration:none; border-radius:8px; font-weight:bold; font-size:15px;">
-        Crear nueva contraseña
-      </a>
+        <a href="${link}" 
+            style="display:inline-block; background:#2563eb; color:#fff; padding:12px 16px; text-decoration:none; border-radius:8px; font-weight:bold; font-size:15px;">
+            Crear nueva contraseña
+        </a>
 
-      <p style="margin:16px 0 0; color:#6b7280; font-size:13px; line-height:1.6;">
-        Si tú no solicitaste este cambio, ignora este correo.
-      </p>
+        <p style="margin:16px 0 0; color:#6b7280; font-size:13px; line-height:1.6;">
+            Si tú no solicitaste este cambio, ignora este correo.
+        </p>
     `
     );
 
@@ -108,23 +106,23 @@ const sendMailToOwner = async (userMail, password) => {
     const html = baseTemplate(
         "Credenciales de acceso 🎓",
         `
-      <p style="margin:0 0 14px; color:#374151; font-size:15px; line-height:1.6;">
-        Tu cuenta fue creada. Puedes iniciar sesión con:
-      </p>
+        <p style="margin:0 0 14px; color:#374151; font-size:15px; line-height:1.6;">
+            Tu cuenta fue creada. Puedes iniciar sesión con:
+        </p>
 
-      <div style="background:#f9fafb; border:1px solid #e5e7eb; padding:12px; border-radius:8px; font-size:14px; color:#111827;">
-        <p style="margin:0 0 6px;"><b>Usuario:</b> ${userMail}</p>
-        <p style="margin:0;"><b>Contraseña:</b> ${password}</p>
-      </div>
+        <div style="background:#f9fafb; border:1px solid #e5e7eb; padding:12px; border-radius:8px; font-size:14px; color:#111827;">
+            <p style="margin:0 0 6px;"><b>Usuario:</b> ${userMail}</p>
+            <p style="margin:0;"><b>Contraseña:</b> ${password}</p>
+        </div>
 
-      <a href="${link}" 
-        style="display:inline-block; margin-top:14px; background:#1e3a8a; color:#fff; padding:12px 16px; text-decoration:none; border-radius:8px; font-weight:bold; font-size:15px;">
-        Iniciar sesión
-      </a>
+        <a href="${link}" 
+            style="display:inline-block; margin-top:14px; background:#1e3a8a; color:#fff; padding:12px 16px; text-decoration:none; border-radius:8px; font-weight:bold; font-size:15px;">
+            Iniciar sesión
+        </a>
 
-      <p style="margin:16px 0 0; color:#6b7280; font-size:13px; line-height:1.6;">
-        Por seguridad, cambia tu contraseña después de iniciar sesión.
-      </p>
+        <p style="margin:16px 0 0; color:#6b7280; font-size:13px; line-height:1.6;">
+            Por seguridad, cambia tu contraseña después de iniciar sesión.
+        </p>
     `
     );
 
