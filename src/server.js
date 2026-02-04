@@ -8,7 +8,6 @@ import routerEstudiante from './routers/estudiante_routes.js';
 import routerDocente from './routers/docente_routes.js';
 import routerCalificacion from './routers/calificacion_routes.js';
 
-require("dotenv").config();
 dotenv.config();
 
 // Inicializaciones
