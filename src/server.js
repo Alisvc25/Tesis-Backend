@@ -8,6 +8,9 @@ import routerEstudiante from './routers/estudiante_routes.js';
 import routerDocente from './routers/docente_routes.js';
 import routerCalificacion from './routers/calificacion_routes.js';
 
+const { verifyMail } = require("./src/config/nodemailer");
+verifyMail();
+
 dotenv.config();
 
 // Inicializaciones

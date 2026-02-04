@@ -9,8 +9,8 @@ mongoose.set('strictQuery', true) //que sea extricta
 const connection = async()=>{ 
 try{
     await mongoose.connect(process.env.MONGO_DB_URL,{
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+    //useNewUrlParser: true,
+    //useUnifiedTopology: true
 });
     console.log('✅ Conectado a MongoDB Atlas');
 }catch (error) {
