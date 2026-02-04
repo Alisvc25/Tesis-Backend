@@ -1,11 +1,8 @@
-// src/helpers/email.js
 const { transporter } = require("../config/nodemailer");
 
 async function enviarCorreo(to, subject, html) {
-    const from = process.env.MAIL_FROM || process.env.MAIL_USER;
-
     return transporter.sendMail({
-        from,
+        from: process.env.MAIL_FROM || process.env.USER_MAILTRAP,
         to,
         subject,
         html,
